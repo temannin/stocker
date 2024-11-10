@@ -1,0 +1,31 @@
+name: Rust
+
+on:
+  push:
+    tags:        # This ensures the job only runs when a tag is pushed.
+      - '*'
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install cross
+      run: cargo install cross
+
+    - name: Build for arm (Raspberry Pi 32-bit)
+      run: cross build --release --target arm-unknown-linux-gnueabihf
+
+    - name: Upload release assets
+      uses: softprops/action-gh-release@v2
+      with:
+        files: target/arm-unknown-linux-gnueabihf/release/stocker
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
