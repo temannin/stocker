@@ -6,11 +6,9 @@ function error_exit {
     exit 1
 }
 
-# Step 1: Fetch the latest release tag from GitHub API
-RELEASE_INFO=$(curl -s https://api.github.com/repos/temannin/stocker/releases/latest) || error_exit "Failed to fetch latest release info."
 
 # Extract the download URL for the binary (assuming the binary is for Linux x86_64)
-DOWNLOAD_URL=$(echo "$RELEASE_INFO" | jq -r '.assets[] | select(.name == "stocker") | .browser_download_url') || error_exit "Failed to extract download URL."
+DOWNLOAD_URL=https://github.com/temannin/stocker/releases/latest/download/stocker
 
 # Step 2: Download the release binary
 echo "Downloading stocker binary..."
