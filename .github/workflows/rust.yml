@@ -1,9 +1,10 @@
 name: Rust
 
 on:
-  push:
-    tags:        # This ensures the job only runs when a tag is pushed.
-      - '*'
+  workflow_run:
+    workflows: ["Tag Creation"]  # Name of the first workflow
+    types:
+      - completed  # Runs when the Release workflow completes successfully
 
 env:
   CARGO_TERM_COLOR: always
