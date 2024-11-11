@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to your default branch
+
+jobs:
+  tag-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Read Cargo.toml version
+        id: cargo-version
+        run: |
+          cd app
+          version=$(grep '^version' Cargo.toml | sed 's/version = "//;s/"//')
+          echo "version=$version" >> $GITHUB_ENV
+
+      - name: Check for existing tag
+        id: check-tag
+        run: |
+          if git rev-parse "v${{ env.version }}" >/dev/null 2>&1; then
+            echo "Tag v${{ env.version }} already exists."
+            exit 1
+          fi
+
+      - name: Create and push tag
+        if: ${{ success() }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "v${{ env.version }}"
+          git push origin "v${{ env.version }}"
