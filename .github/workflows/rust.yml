@@ -18,18 +18,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - name: Validate tag_name input
+        run: |
+          if [ -z "${{ inputs.tag_name }}" ]; then
+            echo "Error: tag_name input is required and cannot be empty."
+            exit 1
+          fi
 
-    - name: Install cross
-      run: cargo install cross
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Build for arm (Raspberry Pi 32-bit)
-      run: cross build --release --target arm-unknown-linux-gnueabihf
+      - name: Install cross
+        run: cargo install cross
 
-    - name: Upload release assets
-      uses: softprops/action-gh-release@v2
-      with:
-        files: target/arm-unknown-linux-gnueabihf/release/stocker
-        tag_name: ${{ inputs.tag_name }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build for arm (Raspberry Pi 32-bit)
+        run: cross build --release --target arm-unknown-linux-gnueabihf
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/arm-unknown-linux-gnueabihf/release/stocker
+          tag_name: ${{ inputs.tag_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
