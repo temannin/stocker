@@ -21,13 +21,13 @@ jobs:
         run: |
           cd app
           version=$(grep '^version' Cargo.toml | sed 's/version = "//;s/"//')
-          echo "version=$version" >> $GITHUB_ENV
+          echo "VERSION=$version" >> $GITHUB_ENV  # Set environment variable with the version
 
       - name: Verify Tag Does Not Exist
         id: verify-tag
         run: |
-          if git tag | grep -q "v${{ env.version }}"; then
-            echo "Tag v${{ env.version }} already exists. Skipping tag creation."
+          if git tag | grep -q "v${{ env.VERSION }}"; then
+            echo "Tag v${{ env.VERSION }} already exists. Skipping tag creation."
             exit 1
           fi
 
@@ -36,7 +36,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: v${{ env.version }}
+          custom_tag: v${{ env.VERSION }}
 
   build-release-artifacts:
     needs: check-and-create-tag
@@ -44,4 +44,4 @@ jobs:
     name: Build Release Artifacts
     uses: ./.github/workflows/rust.yml  # Call the Rust-based workflow
     with:
-      tag_name: v${{ env.version }}  # Pass the tag name to the rust.yml workflow
+      tag_name: v${{ env.VERSION }}  # Pass the version as a tag_name to the rust.yml workflow
