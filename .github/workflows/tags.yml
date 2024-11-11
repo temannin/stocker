@@ -40,5 +40,4 @@ jobs:
 
   generate-release-artifacts:
     needs: tag-release
-    if: ${{ success() }}  # Ensures this only runs if the tag creation was successful
     uses: ./.github/workflows/rust.yml  # Call the rust workflow
