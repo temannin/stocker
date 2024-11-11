@@ -11,7 +11,8 @@ permissions:
 jobs:
   check-and-create-tag:
     runs-on: ubuntu-latest
-
+    outputs: 
+      tag_name: ${{ steps.step2.outputs.tag_name }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -41,7 +42,6 @@ jobs:
 
   build-release-artifacts:
     needs: check-and-create-tag
-    if: ${{ needs.check-and-create-tag.result == 'success' }}  # Runs only if the tag creation was successful
     name: Build Release Artifacts
     uses: ./.github/workflows/rust.yml  # Call the Rust-based workflow
     with:
