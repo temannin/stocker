@@ -5,6 +5,9 @@ on:
     branches:
       - main  # Adjust this to your default branch
 
+permissions:
+  write
+
 jobs:
   tag-release:
     runs-on: ubuntu-latest
