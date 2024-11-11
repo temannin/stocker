@@ -6,7 +6,7 @@ on:
       - main  # Adjust this to your default branch
 
 permissions:
-  write
+  contents: write
 
 jobs:
   tag-release:
