@@ -1,4 +1,4 @@
-name: Tag Creation
+name: Create and Tag Release
 
 on:
   push:
@@ -9,36 +9,37 @@ permissions:
   contents: write
 
 jobs:
-  tag-release:
+  check-and-create-tag:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Read Cargo.toml version
-        id: cargo-version
+      - name: Read Version from Cargo.toml
+        id: read-version
         run: |
           cd app
           version=$(grep '^version' Cargo.toml | sed 's/version = "//;s/"//')
           echo "version=$version" >> $GITHUB_ENV
 
-      - name: Check for existing tag
-        id: check-tag
+      - name: Verify Tag Does Not Exist
+        id: verify-tag
         run: |
           if git tag | grep -q "v${{ env.version }}"; then
-            echo "Tag v${{ env.version }} already exists."
+            echo "Tag v${{ env.version }} already exists. Skipping tag creation."
             exit 1
           fi
 
-      - name: Create and push tag
+      - name: Create and Push New Tag
         if: ${{ success() }}
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           custom_tag: v${{ env.version }}
 
-  generate-release-artifacts:
-    needs: tag-release
-    if: ${{ needs.tag-release.result == 'success' }}  # Ensures this only runs if the tag creation was successful
-    uses: ./.github/workflows/rust.yml  # Call the rust workflow
+  build-release-artifacts:
+    needs: check-and-create-tag
+    if: ${{ needs.check-and-create-tag.result == 'success' }}  # Runs only if the tag creation was successful
+    name: Build Release Artifacts
+    uses: ./.github/workflows/rust.yml  # Call the Rust-based workflow
