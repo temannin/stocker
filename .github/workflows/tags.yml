@@ -12,7 +12,7 @@ jobs:
   check-and-create-tag:
     runs-on: ubuntu-latest
     outputs: 
-      tag_name: ${{ steps.step2.outputs.tag_name }}
+      tag_name: ${{ steps.read-version.outputs.tag_name }}  # Correct reference to the output from the read-version step
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -45,4 +45,4 @@ jobs:
     name: Build Release Artifacts
     uses: ./.github/workflows/rust.yml  # Call the Rust-based workflow
     with:
-      tag_name: ${{ needs.check-and-create-tag.outputs.tag_name }}  # Pass the tag_name from the first job
+      tag_name: ${{ needs.check-and-create-tag.outputs.tag_name }}  # Correctly reference the tag_name output from the first job
