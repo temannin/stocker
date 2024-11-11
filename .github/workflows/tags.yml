@@ -40,4 +40,4 @@ jobs:
 
       - name: Call Rust Workflow
         if: ${{ success() }}
-        uses: ./.github/workflows/rust.yml
+        uses: .github/workflows/rust.yml
