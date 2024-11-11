@@ -43,3 +43,5 @@ jobs:
     if: ${{ needs.check-and-create-tag.result == 'success' }}  # Runs only if the tag creation was successful
     name: Build Release Artifacts
     uses: ./.github/workflows/rust.yml  # Call the Rust-based workflow
+    with:
+      tag_name: v${{ env.version }}  # Pass the tag name to the rust.yml workflow
