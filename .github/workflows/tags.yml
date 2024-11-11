@@ -22,6 +22,7 @@ jobs:
           cd app
           version=$(grep '^version' Cargo.toml | sed 's/version = "//;s/"//')
           echo "VERSION=$version" >> $GITHUB_ENV  # Set environment variable with the version
+          echo "tag_name=v$version" >> $GITHUB_OUTPUT  # Set the tag_name output variable
 
       - name: Verify Tag Does Not Exist
         id: verify-tag
@@ -44,4 +45,4 @@ jobs:
     name: Build Release Artifacts
     uses: ./.github/workflows/rust.yml  # Call the Rust-based workflow
     with:
-      tag_name: v${{ env.VERSION }}  # Pass the version as a tag_name to the rust.yml workflow
+      tag_name: ${{ needs.check-and-create-tag.outputs.tag_name }}  # Pass the tag_name from the first job
