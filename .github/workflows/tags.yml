@@ -35,6 +35,6 @@ jobs:
         if: ${{ success() }}
         uses: laputansoft/github-tag-action@v4.6
         with:
-          github_token: ${{ env.github-token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ env.version }}
           release_branches: main
