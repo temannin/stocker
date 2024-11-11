@@ -5,11 +5,17 @@ mod worker;
 use std::thread;
 use std::time::Duration;
 
-use systemd_journal_logger::JournalLog;
+use slog::{o, Drain, Logger};
+use slog_scope::info;
 
 fn main() {
-    JournalLog::new().unwrap().install().unwrap();
-    log::set_max_level(log::LevelFilter::Info);
+    let decorator = slog_term::PlainDecorator::new(std::io::stdout());
+    let drain = slog_term::CompactFormat::new(decorator).build().fuse();
+    let drain = slog_async::Async::new(drain).build().fuse();
+    let logger = Logger::root(drain, o!());
+    let _guard = slog_scope::set_global_logger(logger);
+
+    info!("Starting stocker");
 
     thread::spawn(move || worker::start());
 

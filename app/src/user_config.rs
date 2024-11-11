@@ -1,6 +1,6 @@
 use home::home_dir;
-use log::info;
 use serde::{Deserialize, Serialize};
+use slog_scope::info;
 use std::fs;
 use std::io::Write;
 use std::path::PathBuf;

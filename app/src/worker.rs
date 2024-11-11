@@ -1,6 +1,6 @@
 use anylist;
 use crossbeam::channel::Receiver;
-use log::{error, info};
+use slog_scope::{error, info};
 use upc;
 
 use crossbeam::channel;
@@ -46,10 +46,13 @@ pub fn start() -> io::Result<()> {
     let (tx, rx) = channel::unbounded();
 
     // Try to open the device and handle the case if it fails
-    let mut device = Device::open(&configuration.device_path).expect(&format!(
-        "Failed to open device at path: {}",
-        configuration.device_path
-    ));
+    let mut device = match Device::open(&configuration.device_path) {
+        Ok(dev) => dev,
+        Err(e) => {
+            error!("Failed to open device at path {}: {}", configuration.device_path, e);
+            return Err(e);
+        }
+    };
 
     info!("Listening for input events on {:?}", device.physical_path());
 
