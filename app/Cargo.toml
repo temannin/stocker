@@ -1,6 +1,6 @@
 [package]
 name = "stocker"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 
 [dependencies]
@@ -19,5 +19,7 @@ slog-scope = "4.4.0"
 
 [profile.release]
 lto = true
-strip = "debuginfo"
+strip = true
 panic = "abort"
+opt-level = "z"  # Optimize for size.
+codegen-units = 1
