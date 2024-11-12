@@ -15,7 +15,7 @@ fn main() {
     let logger = Logger::root(drain, o!());
     let _guard = slog_scope::set_global_logger(logger);
 
-    info!("Starting stocker");
+    info!("Starting stocker {:?}", env!("CARGO_PKG_VERSION"));
 
     thread::spawn(move || worker::start());
 
